@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C# Conditions Practice</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #f0f2f5;
+    --border: #d9dde3;
+    --text: #1d232b;
+    --muted: #5b6573;
+    --accent: #3b5bdb;
+    --accent-text: #ffffff;
+    --code-bg: #f3f4f7;
+    --kw: #7048e8;
+    --pass: #2b8a3e;
+    --pass-bg: #e6f4ea;
+    --fail: #c92a2a;
+    --fail-bg: #fdecec;
+    --warn: #a35a00;
+    --warn-bg: #fff4e0;
+    --mark: #ffd8a8;
+    --focus: #4c6ef5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171c;
+      --surface: #1c2027;
+      --surface-2: #242a33;
+      --border: #343b46;
+      --text: #e6e9ee;
+      --muted: #9aa4b2;
+      --accent: #5c7cfa;
+      --accent-text: #ffffff;
+      --code-bg: #171b21;
+      --kw: #b197fc;
+      --pass: #69db7c;
+      --pass-bg: #1f3326;
+      --fail: #ff8787;
+      --fail-bg: #3a2224;
+      --warn: #ffc078;
+      --warn-bg: #3a2e1c;
+      --mark: #7a4a12;
+      --focus: #748ffc;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171c;
+    --surface: #1c2027;
+    --surface-2: #242a33;
+    --border: #343b46;
+    --text: #e6e9ee;
+    --muted: #9aa4b2;
+    --accent: #5c7cfa;
+    --accent-text: #ffffff;
+    --code-bg: #171b21;
+    --kw: #b197fc;
+    --pass: #69db7c;
+    --pass-bg: #1f3326;
+    --fail: #ff8787;
+    --fail-bg: #3a2224;
+    --warn: #ffc078;
+    --warn-bg: #3a2e1c;
+    --mark: #7a4a12;
+    --focus: #748ffc;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  code, input.answer, .code, table { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 0 16px; }
+
+  header.top {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0 14px;
+  }
+  h1 { margin: 0 0 4px; font-size: 1.6rem; }
+  .intro { margin: 0 0 14px; color: var(--muted); }
+  .intro code { color: var(--text); background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .score { font-weight: 600; }
+  .score-detail { color: var(--muted); font-size: 0.9rem; width: 100%; }
+  .score-detail:empty { display: none; }
+
+  button {
+    font: inherit;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(0.97); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
+  button.ghost { background: transparent; color: var(--muted); margin-left: auto; }
+  button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  nav.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  nav.chips a {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 32px; height: 28px; padding: 0 6px;
+    border-radius: 6px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--muted);
+    font-size: 0.85rem; font-weight: 600; text-decoration: none;
+  }
+  nav.chips a[data-status="pass"] { background: var(--pass-bg); color: var(--pass); border-color: var(--pass); }
+  nav.chips a[data-status="fail"] { background: var(--fail-bg); color: var(--fail); border-color: var(--fail); }
+  nav.chips a[data-status="error"] { background: var(--warn-bg); color: var(--warn); border-color: var(--warn); }
+
+  main { padding: 8px 0 60px; }
+  .level h2 { margin: 32px 0 6px; font-size: 1.25rem; }
+  .level-notes { margin: 0 0 14px; color: var(--muted); font-size: 0.95rem; }
+  .level-notes code { color: var(--text); background: var(--code-bg); padding: 1px 5px; border-radius: 4px; white-space: nowrap; }
+  .level-notes ul { margin: 4px 0 0; padding-left: 20px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin: 0 0 14px;
+    scroll-margin-top: 12px;
+  }
+  .card[data-status="pass"] { border-left-color: var(--pass); }
+  .card[data-status="fail"] { border-left-color: var(--fail); }
+  .card[data-status="error"] { border-left-color: var(--warn); }
+
+  .card-head { display: flex; align-items: baseline; gap: 10px; }
+  .card-head h3 { margin: 0; font-size: 1.02rem; font-weight: 600; flex: 1; }
+  .num { color: var(--muted); font-weight: 700; min-width: 1.6em; }
+  .badge { font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+  .card[data-status="pass"] .badge { color: var(--pass); }
+  .card[data-status="fail"] .badge { color: var(--fail); }
+  .card[data-status="error"] .badge { color: var(--warn); }
+
+  .code {
+    margin: 10px 0;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  .code .kw { color: var(--kw); }
+  .code .indent { display: flex; align-items: center; gap: 8px; padding-left: 2ch; }
+  .code .indent input { flex: 1; min-width: 0; }
+  input.answer {
+    font-size: 0.95rem;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text);
+  }
+  input.answer::placeholder { color: var(--muted); opacity: 0.7; }
+
+  .actions { display: flex; align-items: center; gap: 12px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+
+  .result { margin-top: 10px; }
+  .result:empty { display: none; }
+  .result.stale { opacity: 0.55; }
+  .summary { font-weight: 600; margin: 0 0 6px; }
+  .summary.pass { color: var(--pass); }
+  .summary.fail { color: var(--fail); }
+  .error-box {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .error-box .title { font-weight: 600; color: var(--warn); margin: 0 0 4px; }
+  .error-box p { margin: 0 0 6px; }
+  .error-box code { background: var(--surface); padding: 1px 5px; border-radius: 4px; }
+  .error-box pre {
+    margin: 6px 0 0; padding: 6px 8px; border-radius: 6px;
+    background: var(--surface); overflow-x: auto; white-space: pre;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  mark { background: var(--mark); color: inherit; border-radius: 3px; }
+
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; font-size: 0.9rem; }
+  th, td { padding: 3px 14px 3px 0; text-align: left; white-space: nowrap; }
+  th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); font-family: system-ui, sans-serif; }
+  td.ok { color: var(--pass); font-weight: 700; }
+  td.wrong { color: var(--fail); font-weight: 700; }
+  tr.wrong-row td { background: var(--fail-bg); }
+  td.num-cell { text-align: right; padding-right: 18px; }
+
+  footer { color: var(--muted); font-size: 0.85rem; padding: 0 0 40px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>C# Conditions Practice</h1>
+    <p class="intro">
+      Each problem is a C# method that must answer <code>true</code> or <code>false</code>.
+      Type your condition after <code>return</code>, then press <b>Run</b> (or Enter).
+      For example, <code>x &gt; 5</code>.
+    </p>
+    <div class="toolbar">
+      <button type="button" class="primary" id="run-all">Run all</button>
+      <span class="score" id="score" aria-live="polite">Solved: 0 of 24</span>
+      <button type="button" class="ghost" id="clear-all">Clear my answers</button>
+      <div class="score-detail" id="score-detail"></div>
+    </div>
+    <nav class="chips" id="chips" aria-label="Jump to a problem"></nav>
+  </div>
+</header>
+
+<main class="wrap" id="problems"></main>
+
+<footer class="wrap">
+  This page checks your answers in the browser. It understands the parts of C# used in these
+  problems: whole numbers, <code>x</code>, <code>y</code>, <code>true</code>, <code>false</code>,
+  <code>+ - * / %</code>, <code>&lt; &gt; &lt;= &gt;= == !=</code>, <code>&amp;&amp; || !</code> and parentheses.
+  Your answers are saved in this browser.
+</footer>
+
+<script>
+// ===================================================================
+//   PROBLEMS AND TEST DATA
+//   Expected answers: T = true, F = false, one letter per test value.
+// ===================================================================
+// CORE START
+const LEVELS = [
+  { n: 1, title: "Comparisons",
+    notes: "Use <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code> <code>==</code> <code>!=</code>" },
+  { n: 2, title: "Modulo % (the remainder after dividing)",
+    notes: "<ul><li><code>10 % 3 == 1</code> because 10 = 3*3 + 1</li><li><code>12 % 4 == 0</code> because 4 divides 12 exactly</li></ul>" },
+  { n: 3, title: "AND && and OR ||",
+    notes: "<ul><li><code>a &amp;&amp; b</code> is true only when BOTH are true</li><li><code>a || b</code> is true when AT LEAST ONE is true</li></ul>" },
+  { n: 4, title: "Digits (all numbers here are positive)",
+    notes: "<ul><li><code>x % 10</code> gives the LAST digit (<code>347 % 10 == 7</code>)</li>" +
+           "<li><code>x / 10</code> removes the last digit (<code>347 / 10 == 34</code>)</li>" +
+           "<li><code>x / 10 % 10</code> gives the TENS digit (<code>347 / 10 % 10 == 4</code>)</li>" +
+           "<li><code>x / 100</code> gives the HUNDREDS digit (<code>347 / 100 == 3</code>, for x &lt; 1000)</li></ul>" },
+  { n: 5, title: "Two numbers x and y",
+    notes: "Now the method gets TWO numbers. Use both of them in your condition." },
+];
+
+function problem(num, level, question, xs, expected, ys) {
+  const params = ys ? ["x", "y"] : ["x"];
+  if (xs.length !== expected.length || (ys && ys.length !== xs.length)) {
+    throw new Error("Test data length mismatch in problem " + num);
+  }
+  const tests = xs.map((x, i) => ({
+    args: ys ? [x, ys[i]] : [x],
+    expected: expected[i] === "T",
+  }));
+  return { num, level, question, params, tests };
+}
+
+const PROBLEMS = [
+  problem(1, 1, "Is x less than 10?", [3, 9, 10, 11, -5, 0, 100], "TTFFTTF"),
+  problem(2, 1, "Is x greater than 100?", [50, 99, 100, 101, 500, -200], "FFFTTF"),
+  problem(3, 1, "Is x at least 18? (old enough to vote)", [12, 17, 18, 19, 40, 0], "FFTTTF"),
+  problem(4, 1, "Is x zero or negative?", [5, 1, 0, -1, -100], "FFTTT"),
+  problem(5, 1, "Is x exactly 7?", [7, 6, 8, 70, 17, -7], "TFFFFF"),
+  problem(6, 1, "Is x NOT zero?", [0, 1, -1, 99, 10], "FTTTT"),
+
+  problem(7, 2, "Is x even?", [4, 7, 0, 100, 13, -6], "TFTTFT"),
+  problem(8, 2, "Is x odd?  (careful: try negative numbers!)", [3, 8, 0, 99, -3, -4, -11], "TFFTTFT"),
+  problem(9, 2, "Is x divisible by 5?", [10, 12, 0, 35, 51, 5, 4], "TFTTFTF"),
+
+  problem(10, 3, "Is x between 10 and 20? (10 and 20 count)", [9, 10, 15, 20, 21, 0, 100], "FTTTFFF"),
+  problem(11, 3, "Is x OUTSIDE the range 1 to 100?", [0, 1, 50, 100, 101, -5, 500], "TFFFTTT"),
+  problem(12, 3, "Is x even AND positive?", [4, 3, 0, -4, 10, 7, -3], "TFFFTFF"),
+  problem(13, 3, "Is x divisible by 3 OR by 5?", [9, 10, 15, 7, 22, 25, 1], "TTTFFTF"),
+  problem(14, 3, "Is x divisible by BOTH 3 and 5?", [15, 9, 10, 30, 7, 45, 50], "TFFTFTF"),
+  problem(15, 3, "Is x a positive two-digit number? (10 to 99)", [9, 10, 55, 99, 100, -50, 5], "FTTTFFF"),
+
+  problem(16, 4, "Does x end with the digit 7?", [7, 17, 70, 127, 71, 1007, 8], "TTFTFTF"),
+  problem(17, 4, "Is x a two-digit number in the 70s? (70 to 79)", [69, 70, 75, 79, 80, 7, 77], "FTTTFFT"),
+  problem(18, 4, "Is x a two-digit number with both digits the same? (11, 22, ...)",
+    [33, 34, 99, 10, 77, 11, 12, 90], "TFTFTTFF"),
+  problem(19, 4, "7 BOOM! (x from 1 to 99) Is x divisible by 7, OR ends with 7, OR in the 70s?",
+    [1, 7, 14, 17, 22, 49, 50, 70, 71, 77, 80, 91, 97], "FTTTFTFTTTFTT"),
+  problem(20, 4, "Does x contain the digit 3 anywhere? (x from 0 to 999)",
+    [3, 13, 31, 130, 305, 300, 333, 123, 444, 100, 0, 999, 38], "TTTTTTTTFFFFT"),
+
+  problem(21, 5, "Is x greater than y?",
+    [5, 3, 4, -1, 0, 100, -8], "TFFTFTF",
+    [3, 5, 4, -2, 10, 99, -3]),
+  problem(22, 5, "Are x and y BOTH even?",
+    [2, 2, 3, 3, 0, 10, -4], "TFFFTFT",
+    [4, 3, 2, 5, -6, 7, 8]),
+  problem(23, 5, "Are x and y BOTH odd?  (careful: try negative numbers!)",
+    [3, 3, 4, 2, -3, -1, 0], "TFFFTTF",
+    [5, 4, 3, 6, 7, -1, 1]),
+  problem(24, 5, "Are x and y both odd OR both even?",
+    [2, 3, 2, 3, 0, -3, -4, 10, 7], "TTFFTTFFT",
+    [4, 5, 3, 2, 0, 5, 7, -1, -9]),
+];
+
+// ===================================================================
+//   A SMALL C# EXPRESSION CHECKER
+//   Parses the subset of C# used in these problems, type-checks it the
+//   way the C# compiler would (int vs bool), and evaluates it with C#
+//   int rules: whole-number division rounds toward zero, % keeps the
+//   sign of the left side, and results wrap around at 32 bits.
+// ===================================================================
+
+class CodeError extends Error {
+  constructor(message, start, end) { super(message); this.start = start; this.end = end; }
+}
+class RunError extends Error {}
+
+const OPERATORS = ["&&", "||", "==", "!=", "<=", ">=", "=>", "=<",
+                   "<", ">", "!", "+", "-", "*", "/", "%", "(", ")", "=", "&", "|", ";"];
+const BINARY_LEVELS = [["||"], ["&&"], ["==", "!="], ["<", ">", "<=", ">="], ["+", "-"], ["*", "/", "%"]];
+const COMPARE = ["<", ">", "<=", ">="];
+const MATH = ["+", "-", "*", "/", "%"];
+const INT_MAX = 2147483647;
+
+function tokenize(src) {
+  const tokens = [];
+  let i = 0;
+  while (i < src.length) {
+    const c = src[i];
+    if (/\s/.test(c)) { i++; continue; }
+    if (/[0-9]/.test(c)) {
+      let j = i;
+      while (j < src.length && /[0-9]/.test(src[j])) j++;
+      if (src[j] === ".") {
+        throw new CodeError("x is an int, so use whole numbers only (no decimal point).", i, j + 1);
+      }
+      if (j < src.length && /[A-Za-z_]/.test(src[j])) {
+        let k = j;
+        while (k < src.length && /[A-Za-z0-9_]/.test(src[k])) k++;
+        const n = src.slice(i, j), name = src.slice(j, k);
+        throw new CodeError("C# needs an operator between `" + n + "` and `" + name +
+          "`. To multiply, write `" + n + " * " + name + "`.", i, k);
+      }
+      tokens.push({ type: "num", text: src.slice(i, j), start: i, end: j });
+      i = j;
+      continue;
+    }
+    if (/[A-Za-z_]/.test(c)) {
+      let j = i;
+      while (j < src.length && /[A-Za-z0-9_]/.test(src[j])) j++;
+      if (src[j] === "." || src[j] === "(") {
+        throw new CodeError("Methods like `Math.Abs(x)` aren't available on this page. " +
+          "Use only `x`, `y`, numbers and operators.", i, j);
+      }
+      tokens.push({ type: "ident", text: src.slice(i, j), start: i, end: j });
+      i = j;
+      continue;
+    }
+    const op = OPERATORS.find(o => src.startsWith(o, i));
+    if (op) {
+      tokens.push({ type: "op", text: op, start: i, end: i + op.length });
+      i += op.length;
+      continue;
+    }
+    if (c === "≤" || c === "≥" || c === "≠") {
+      const fix = { "≤": "<=", "≥": ">=", "≠": "!=" }[c];
+      throw new CodeError("C# writes " + c + " as `" + fix + "`.", i, i + 1);
+    }
+    throw new CodeError('C# doesn\'t understand the character "' + c + '" here.', i, i + 1);
+  }
+  tokens.push({ type: "end", text: "", start: src.length, end: src.length });
+  return tokens;
+}
+
+// Friendly messages for things beginners often type.
+function commonMistake(tok) {
+  const t = tok.text;
+  if (tok.type === "op") {
+    if (t === "=") return "A single `=` means \"store a value\". To compare, use two: `==`.";
+    if (t === "=>") return "Did you mean `>=`? In C# the `=` goes second.";
+    if (t === "=<") return "Did you mean `<=`? In C# the `=` goes second.";
+    if (t === "&") return "Use two: `&&` means AND.";
+    if (t === "|") return "Use two: `||` means OR.";
+    if (t === ";") return "Write just one condition. A `;` is only allowed at the very end.";
+  }
+  if (tok.type === "ident") {
+    if (t === "and" || t === "AND") return "C# writes AND as `&&`.";
+    if (t === "or" || t === "OR") return "C# writes OR as `||`.";
+    if (t === "not" || t === "NOT") return "C# writes NOT as `!`, or use `!=` for \"not equal\".";
+    if (t === "mod" || t === "MOD") return "C# writes mod as `%`.";
+    if (t === "return") return "`return` is already written for you. Type only the condition.";
+  }
+  return null;
+}
+
+function compile(src, params) {
+  const toks = tokenize(src);
+  let pos = 0;
+  // Allow "return x > 5;" as well as "x > 5".
+  if (toks[0].type === "ident" && toks[0].text === "return") pos = 1;
+  if (toks.length >= 2 && toks[toks.length - 2].text === ";") toks.splice(toks.length - 2, 1);
+  if (toks[pos].type === "end") {
+    throw new CodeError("Write a condition after `return`.", src.length, src.length);
+  }
+
+  const peek = () => toks[pos];
+  const next = () => toks[pos++];
+  const text = n => src.slice(n.start, n.end).trim();
+  const typeName = n => n.type === "bool" ? "true/false" : "number";
+
+  function parseBinary(level) {
+    if (level === BINARY_LEVELS.length) return parseUnary();
+    let left = parseBinary(level + 1);
+    while (peek().type === "op" && BINARY_LEVELS[level].includes(peek().text)) {
+      const op = next().text;
+      const right = parseBinary(level + 1);
+      left = makeBinary(op, left, right);
+    }
+    return left;
+  }
+
+  function makeBinary(op, left, right) {
+    const n = { kind: "binary", op, left, right, start: left.start, end: right.end };
+    if (MATH.includes(op)) {
+      const bad = [left, right].find(s => s.type === "bool");
+      if (bad) throw new CodeError("`" + op + "` does math on numbers, but `" + text(bad) +
+        "` is true/false.", bad.start, bad.end);
+      if ((op === "/" || op === "%") && right.kind === "num" && right.value === 0) {
+        throw new CodeError("You can't divide by zero. C# won't compile `" + text(n) + "`.", n.start, n.end);
+      }
+      n.type = "int";
+    } else if (COMPARE.includes(op)) {
+      if (left.type === "bool" && left.kind === "binary" && COMPARE.includes(left.op) && !left.paren) {
+        throw new CodeError("C# can't chain comparisons like `" + text(n) + "`. Make it two comparisons joined by `&&`: `" +
+          text(left.left) + " " + left.op + " " + text(left.right) + " && " +
+          text(left.right) + " " + op + " " + text(right) + "`.", n.start, n.end);
+      }
+      const bad = [left, right].find(s => s.type === "bool");
+      if (bad) throw new CodeError("`" + op + "` compares two numbers, but `" + text(bad) +
+        "` is true/false.", bad.start, bad.end);
+      n.type = "bool";
+    } else if (op === "==" || op === "!=") {
+      if (left.type !== right.type) {
+        throw new CodeError("`" + op + "` can't compare a " + typeName(left) + " with a " + typeName(right) +
+          ": `" + text(left) + "` is a " + typeName(left) + " but `" + text(right) + "` is a " +
+          typeName(right) + ".", n.start, n.end);
+      }
+      n.type = "bool";
+    } else { // && ||
+      const bad = [left, right].find(s => s.type === "int");
+      if (bad) {
+        const other = bad === left ? right : left;
+        let msg = "`" + op + "` joins two true/false conditions, but `" + text(bad) + "` is a number.";
+        if (bad.kind === "num" && other.kind === "binary" && other.left.kind === "var" &&
+            (COMPARE.includes(other.op) || other.op === "==" || other.op === "!=")) {
+          msg += " Each side needs its own comparison. Did you mean `" + text(other.left) + " " +
+            other.op + " " + text(bad) + "`?";
+        } else if (bad.kind === "num") {
+          msg += " Each side of `" + op + "` needs its own full comparison, using `x`.";
+        } else {
+          msg += " Compare it to something, for example `" + text(bad) + " == 0`.";
+        }
+        throw new CodeError(msg, bad.start, bad.end);
+      }
+      n.type = "bool";
+    }
+    return n;
+  }
+
+  function parseUnary() {
+    const tok = peek();
+    if (tok.type === "op" && (tok.text === "!" || tok.text === "-" || tok.text === "+")) {
+      next();
+      const operand = parseUnary();
+      const n = { kind: "unary", op: tok.text, operand, start: tok.start, end: operand.end };
+      if (tok.text === "!") {
+        if (operand.type !== "bool") {
+          let msg = "`!` flips true/false, but `" + text(operand) + "` is a number.";
+          if (peek().type === "op" && ["==", "!=", "<", ">", "<=", ">="].includes(peek().text)) {
+            msg += " `!` only applies to what comes right after it, so use parentheses: `!(" +
+              src.slice(operand.start).trim().replace(/;$/, "") + ")`.";
+          } else {
+            msg += " To check \"not zero\", write `" + text(operand) + " != 0`.";
+          }
+          throw new CodeError(msg, n.start, n.end);
+        }
+        n.type = "bool";
+      } else {
+        if (operand.type !== "int") throw new CodeError("`" + tok.text + "` works on numbers, but `" +
+          text(operand) + "` is true/false.", n.start, n.end);
+        n.type = "int";
+      }
+      return n;
+    }
+    return parsePrimary();
+  }
+
+  function parsePrimary() {
+    const tok = next();
+    if (tok.type === "num") {
+      const value = Number(tok.text);
+      if (value > INT_MAX) throw new CodeError("`" + tok.text + "` is too big for an int.", tok.start, tok.end);
+      return { kind: "num", type: "int", value, start: tok.start, end: tok.end };
+    }
+    if (tok.type === "ident") {
+      const name = tok.text;
+      if (name === "true" || name === "false") {
+        return { kind: "bool", type: "bool", value: name === "true", start: tok.start, end: tok.end };
+      }
+      if (params.includes(name)) return { kind: "var", type: "int", name, start: tok.start, end: tok.end };
+      const mistake = commonMistake(tok);
+      if (mistake) throw new CodeError(mistake, tok.start, tok.end);
+      const lower = name.toLowerCase();
+      if (lower === "true" || lower === "false" || params.includes(lower)) {
+        throw new CodeError("C# cares about upper and lower case. Write `" + lower + "`, not `" + name + "`.",
+          tok.start, tok.end);
+      }
+      if (name === "y" && !params.includes("y")) {
+        throw new CodeError("This problem only has `x`. There is no `y` here.", tok.start, tok.end);
+      }
+      const have = params.length === 1 ? "`x`" : "`x` and `y`";
+      throw new CodeError("C# doesn't know `" + name + "`. This problem only has " + have +
+        ", numbers, and true/false.", tok.start, tok.end);
+    }
+    if (tok.type === "op" && tok.text === "(") {
+      const inner = parseBinary(0);
+      const close = next();
+      if (close.text !== ")") {
+        if (close.type === "end") throw new CodeError("A `(` is missing its `)`.", tok.start, tok.end);
+        throw unexpected(close);
+      }
+      return Object.assign({}, inner, { start: tok.start, end: close.end, paren: true });
+    }
+    if (tok.type === "end") {
+      throw new CodeError("Your condition ends too early. Something is missing at the end.", tok.start, tok.end);
+    }
+    const mistake = commonMistake(tok);
+    if (mistake) throw new CodeError(mistake, tok.start, tok.end);
+    if (tok.text === ")") throw new CodeError("This `)` doesn't have a matching `(`.", tok.start, tok.end);
+    throw new CodeError("Something is missing before `" + tok.text + "`.", tok.start, tok.end);
+  }
+
+  function unexpected(tok) {
+    const mistake = commonMistake(tok);
+    if (mistake) return new CodeError(mistake, tok.start, tok.end);
+    if (tok.text === ")") return new CodeError("This `)` doesn't have a matching `(`.", tok.start, tok.end);
+    if (tok.type === "num" || tok.type === "ident" || tok.text === "(") {
+      return new CodeError("Something is missing before `" + tok.text +
+        "`. Did you forget an operator like `==`, `&&` or `||`?", tok.start, tok.end);
+    }
+    return new CodeError("C# didn't expect `" + tok.text + "` here.", tok.start, tok.end);
+  }
+
+  const ast = parseBinary(0);
+  if (peek().type !== "end") throw unexpected(peek());
+  if (ast.type !== "bool") {
+    throw new CodeError("Your code gives a number, not true or false. Add a comparison, for example `" +
+      text(ast) + " == 0`.", ast.start, ast.end);
+  }
+  return ast;
+}
+
+function evaluate(n, env) {
+  switch (n.kind) {
+    case "num": case "bool": return n.value;
+    case "var": return env[n.name];
+    case "unary": {
+      const v = evaluate(n.operand, env);
+      if (n.op === "!") return !v;
+      if (n.op === "-") return (-v) | 0;
+      return v;
+    }
+    case "binary": {
+      if (n.op === "&&") return evaluate(n.left, env) && evaluate(n.right, env);
+      if (n.op === "||") return evaluate(n.left, env) || evaluate(n.right, env);
+      const a = evaluate(n.left, env), b = evaluate(n.right, env);
+      switch (n.op) {
+        case "+": return (a + b) | 0;
+        case "-": return (a - b) | 0;
+        case "*": return Math.imul(a, b);
+        case "/": if (b === 0) throw new RunError("Divided by zero"); return (Math.trunc(a / b)) | 0;
+        case "%": if (b === 0) throw new RunError("Divided by zero"); return (a % b) | 0;
+        case "<": return a < b;
+        case ">": return a > b;
+        case "<=": return a <= b;
+        case ">=": return a >= b;
+        case "==": return a === b;
+        case "!=": return a !== b;
+      }
+    }
+  }
+  throw new Error("Unknown node " + n.kind);
+}
+
+function checkProblem(p, src) {
+  if (!src.trim()) return { status: "empty" };
+  let ast;
+  try {
+    ast = compile(src, p.params);
+  } catch (e) {
+    if (e instanceof CodeError) return { status: "error", message: e.message, start: e.start, end: e.end };
+    throw e;
+  }
+  const rows = p.tests.map(t => {
+    const env = {};
+    p.params.forEach((name, i) => { env[name] = t.args[i]; });
+    try {
+      const got = evaluate(ast, env);
+      return { args: t.args, expected: t.expected, got, ok: got === t.expected };
+    } catch (e) {
+      if (e instanceof RunError) return { args: t.args, expected: t.expected, got: null, crash: e.message, ok: false };
+      throw e;
+    }
+  });
+  const correct = rows.filter(r => r.ok).length;
+  return { status: correct === rows.length ? "pass" : "fail", rows, correct };
+}
+// CORE END
+
+// ===================================================================
+//   PAGE
+// ===================================================================
+const STORAGE_KEY = "csharp-conditions-practice-v1";
+const state = {}; // num -> "idle" | "pass" | "fail" | "error"
+
+function loadAnswers() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; }
+}
+function saveAnswers() {
+  const answers = {};
+  PROBLEMS.forEach(p => { answers[p.num] = inputFor(p).value; });
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(answers)); } catch (e) { /* ignore */ }
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function formatMessage(msg) {
+  return escapeHtml(msg).replace(/`([^`]+)`/g, "<code>$1</code>");
+}
+const pad2 = n => (n < 10 ? "0" : "") + n;
+
+const cards = {};
+const inputFor = p => cards[p.num].querySelector("input.answer");
+
+function buildPage() {
+  const main = document.getElementById("problems");
+  const chips = document.getElementById("chips");
+  const saved = loadAnswers();
+
+  LEVELS.forEach(level => {
+    const section = document.createElement("section");
+    section.className = "level";
+    section.innerHTML = "<h2>Level " + level.n + ": " + escapeHtml(level.title) + "</h2>" +
+      '<div class="level-notes">' + level.notes + "</div>";
+    main.appendChild(section);
+
+    PROBLEMS.filter(p => p.level === level.n).forEach(p => {
+      const sig = p.params.map(name => '<span class="kw">int</span> ' + name).join(", ");
+      const card = document.createElement("article");
+      card.className = "card";
+      card.id = "p" + p.num;
+      card.dataset.status = "idle";
+      card.innerHTML =
+        '<div class="card-head"><span class="num">' + p.num + '.</span><h3>' + escapeHtml(p.question) +
+        '</h3><span class="badge"></span></div>' +
+        '<div class="code">' +
+          '<div><span class="kw">static bool</span> P' + pad2(p.num) + "(" + sig + ")</div>" +
+          "<div>{</div>" +
+          '<div class="indent"><span class="kw">return</span>' +
+            '<input class="answer" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" ' +
+            'autocorrect="off" placeholder="your condition" aria-label="Your condition for problem ' + p.num + '">' +
+            "<span>;</span></div>" +
+          "<div>}</div>" +
+        "</div>" +
+        '<div class="actions"><button type="button" class="run">Run</button>' +
+        '<span class="hint">' + p.tests.length + " test values</span></div>" +
+        '<div class="result" aria-live="polite"></div>';
+      section.appendChild(card);
+      cards[p.num] = card;
+
+      const input = card.querySelector("input.answer");
+      input.value = saved[p.num] || "";
+      input.addEventListener("input", () => {
+        card.querySelector(".result").classList.add("stale");
+        saveAnswers();
+      });
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter") { e.preventDefault(); runOne(p); }
+      });
+      card.querySelector("button.run").addEventListener("click", () => runOne(p));
+
+      const chip = document.createElement("a");
+      chip.href = "#p" + p.num;
+      chip.textContent = p.num;
+      chip.dataset.status = "idle";
+      chip.title = p.question;
+      chips.appendChild(chip);
+      state[p.num] = "idle";
+    });
+  });
+}
+
+function setStatus(p, status, badge) {
+  state[p.num] = status;
+  cards[p.num].dataset.status = status;
+  cards[p.num].querySelector(".badge").textContent = badge;
+  document.querySelector('#chips a[href="#p' + p.num + '"]').dataset.status = status;
+}
+
+function runOne(p, opts) {
+  const card = cards[p.num];
+  const resultEl = card.querySelector(".result");
+  const src = inputFor(p).value;
+  const r = checkProblem(p, src);
+  resultEl.classList.remove("stale");
+
+  if (r.status === "empty") {
+    setStatus(p, "idle", "not done yet");
+    resultEl.innerHTML = '<p class="summary">Not done yet. Type a condition after <code>return</code>.</p>';
+  } else if (r.status === "error") {
+    setStatus(p, "error", "won't compile");
+    const before = escapeHtml(src.slice(0, r.start));
+    const bad = r.start === r.end ? "&nbsp;" : escapeHtml(src.slice(r.start, r.end));
+    const after = escapeHtml(src.slice(r.end));
+    resultEl.innerHTML =
+      '<div class="error-box"><p class="title">This won\'t compile</p><p>' + formatMessage(r.message) + "</p>" +
+      "<pre>" + before + "<mark>" + bad + "</mark>" + after + "</pre></div>";
+  } else {
+    const two = p.params.length === 2;
+    const rows = r.rows.map(row => {
+      const got = row.crash ? "error: " + row.crash : String(row.got);
+      return '<tr class="' + (row.ok ? "" : "wrong-row") + '">' +
+        row.args.map(a => '<td class="num-cell">' + a + "</td>").join("") +
+        "<td>" + row.expected + "</td><td>" + escapeHtml(got) + "</td>" +
+        '<td class="' + (row.ok ? "ok" : "wrong") + '">' + (row.ok ? "✓ OK" : "✗ WRONG") + "</td></tr>";
+    }).join("");
+    const total = r.rows.length;
+    const summary = r.status === "pass"
+      ? '<p class="summary pass">All ' + total + " correct!</p>"
+      : '<p class="summary fail">' + r.correct + " of " + total + " correct. Keep trying.</p>";
+    setStatus(p, r.status, r.status === "pass" ? "✓ solved" : r.correct + " of " + total);
+    resultEl.innerHTML = summary +
+      '<div class="table-wrap"><table><thead><tr><th>x</th>' + (two ? "<th>y</th>" : "") +
+      "<th>expected</th><th>your code</th><th></th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+  }
+  if (!opts || !opts.quiet) updateScore(false);
+}
+
+function ranges(nums) {
+  const out = [];
+  for (let i = 0; i < nums.length; i++) {
+    let j = i;
+    while (j + 1 < nums.length && nums[j + 1] === nums[j] + 1) j++;
+    out.push(j - i >= 2 ? nums[i] + "–" + nums[j] : nums.slice(i, j + 1).join(", "));
+    i = j;
+  }
+  return out.join(", ");
+}
+
+function updateScore(showDetail) {
+  const solved = PROBLEMS.filter(p => state[p.num] === "pass").length;
+  const total = PROBLEMS.length;
+  document.getElementById("score").textContent =
+    "Solved: " + solved + " of " + total + (solved === total ? " — Perfect! Every problem is correct!" : "");
+  const detail = document.getElementById("score-detail");
+  if (!showDetail) { detail.textContent = ""; return; }
+  const needWork = PROBLEMS.filter(p => state[p.num] === "fail" || state[p.num] === "error").map(p => p.num);
+  const notDone = PROBLEMS.filter(p => state[p.num] === "idle").map(p => p.num);
+  const parts = [];
+  if (needWork.length) parts.push("Needs work: " + ranges(needWork));
+  if (notDone.length) parts.push("Not done yet: " + ranges(notDone));
+  detail.textContent = parts.join("  ·  ");
+}
+
+document.getElementById("run-all").addEventListener("click", () => {
+  PROBLEMS.forEach(p => runOne(p, { quiet: true }));
+  updateScore(true);
+});
+
+document.getElementById("clear-all").addEventListener("click", () => {
+  if (!confirm("Erase all of your answers on this page?")) return;
+  PROBLEMS.forEach(p => {
+    inputFor(p).value = "";
+    cards[p.num].querySelector(".result").innerHTML = "";
+    setStatus(p, "idle", "");
+  });
+  saveAnswers();
+  updateScore(false);
+});
+
+buildPage();
+updateScore(false);
+</script>
+</body>
+</html>
