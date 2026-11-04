@@ -2,12 +2,13 @@
 
 24 small exercises for practicing C# conditions: `<`, `>`, `<=`, `>=`, `==`, `!=`, `%`, `&&` and `||`. The file has a built-in test runner that checks each answer against sample data.
 
-## Two ways to practice
+## Three ways to practice
 
-- **In the browser (fast):** open [`ConditionsPractice.html`](ConditionsPractice.html). Type each condition in its box and press **Run** (or Enter), or press **Run all**. Results show up instantly, and answers are saved in that browser. The page checks the answers itself in JavaScript. It understands only the parts of C# these problems use: `x`, `y`, whole numbers, `true`/`false`, `+ - * / %`, comparisons, `&& || !` and parentheses. It gives beginner-friendly messages for mistakes such as `=` instead of `==` or `10 <= x <= 20`.
-- **Real C# (slower):** use `ConditionsPractice.cs` in an online C# runner, as described below.
+- **In the browser, JavaScript (fastest):** open [`ConditionsPractice.html`](ConditionsPractice.html). Type each condition in its box and press **Run** (or Enter), or press **Run all**. Results show up instantly, and answers are saved in that browser. The page checks the answers itself in JavaScript. It understands only the parts of C# these problems use: `x`, `y`, whole numbers, `true`/`false`, `+ - * / %`, comparisons, `&& || !` and parentheses. It gives beginner-friendly messages for mistakes such as `=` instead of `==` or `10 <= x <= 20`.
+- **In the browser, real C# (WebAssembly):** the app in [`wasm/`](wasm) runs the real C# compiler (Roslyn) inside the browser. Students write the whole method body, so `if`/`else`, local variables, `Math.Abs` and string methods all work. Compiler errors are the real C# messages, with a plain-language tip for common ones. See [Real C# in the browser](#real-c-in-the-browser) below.
+- **Real C# file (slowest):** use `ConditionsPractice.cs` in an online C# runner, as described below.
 
-Both versions have the same 24 problems and test values.
+All three have the same 24 problems and test values.
 
 ## How to use the C# file
 
@@ -39,3 +40,36 @@ You don't have to finish all the problems at once. Problems you haven't started 
 ## For teachers
 
 [`ConditionsPractice_AnswerKey.cs`](ConditionsPractice_AnswerKey.cs) has a sample solution for every problem. It scores 24/24 when run.
+
+## Real C# in the browser
+
+The [`wasm/`](wasm) folder is a Blazor WebAssembly app. It needs the [.NET 8 SDK](https://dotnet.microsoft.com/download) to build, but students only need a browser.
+
+To try it on your own computer:
+
+```bash
+cd wasm
+dotnet run
+```
+
+Then open http://localhost:5236.
+
+What to expect:
+
+- **First load:** the first visit downloads about 5.5 MB (compressed) and takes a few seconds. After that the browser loads it from its cache.
+- **Speed:** once it's loaded, compiling and running one problem takes a few hundredths of a second, and **Run all** takes well under a second.
+- **Privacy:** nothing is sent to a server. Code is compiled and run in the student's browser, and saved there.
+- **Endless loops:** a `while (true)` loop will freeze the page, and reloading fixes it.
+- **Available .NET types:** students can use `Math`, `Console`, `string`, `char`, `int` and the other number types. Collections and LINQ aren't available.
+
+To host it for a class, publish it and put the `wwwroot` folder on any static web host, such as GitHub Pages:
+
+```bash
+cd wasm
+dotnet publish -c Release -o publish
+```
+
+If the site lives in a subfolder (for example `https://<user>.github.io/csharp-conditions-practice/`), change `<base href="/" />` in `wasm/wwwroot/index.html` to match that folder.
+
+Publishing removes unused .NET code to make the download smaller. [`wasm/StudentApi.xml`](wasm/StudentApi.xml) lists the .NET types to keep for student code, so add a type there if students need one that's missing.
+
