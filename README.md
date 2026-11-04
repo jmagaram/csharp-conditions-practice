@@ -2,7 +2,14 @@
 
 24 small exercises for practicing C# conditions: `<`, `>`, `<=`, `>=`, `==`, `!=`, `%`, `&&` and `||`. The file has a built-in test runner that checks each answer against sample data.
 
-## How to use
+## Two ways to practice
+
+- **In the browser (fast):** open [`ConditionsPractice.html`](ConditionsPractice.html). Type each condition in its box and press **Run** (or Enter), or press **Run all**. Results show up instantly, and answers are saved in that browser. The page checks the answers itself in JavaScript. It understands only the parts of C# these problems use: `x`, `y`, whole numbers, `true`/`false`, `+ - * / %`, comparisons, `&& || !` and parentheses. It gives beginner-friendly messages for mistakes such as `=` instead of `==` or `10 <= x <= 20`.
+- **Real C# (slower):** use `ConditionsPractice.cs` in an online C# runner, as described below.
+
+Both versions have the same 24 problems and test values.
+
+## How to use the C# file
 
 1. Open [`ConditionsPractice.cs`](ConditionsPractice.cs) and copy all of it.
 2. Paste it into an online C# runner such as [.NET Fiddle](https://dotnetfiddle.net) or [OnlineGDB](https://www.onlinegdb.com/online_csharp_compiler).
