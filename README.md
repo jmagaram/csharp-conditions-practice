@@ -1,6 +1,6 @@
 # C# Conditions Practice
 
-20 small exercises for practicing C# conditions: `<`, `>`, `<=`, `>=`, `==`, `!=`, `%`, `&&` and `||`. The file has a built-in test runner that checks each answer against sample data.
+24 small exercises for practicing C# conditions: `<`, `>`, `<=`, `>=`, `==`, `!=`, `%`, `&&` and `||`. The file has a built-in test runner that checks each answer against sample data.
 
 ## How to use
 
@@ -27,7 +27,8 @@ You don't have to finish all the problems at once. Problems you haven't started 
 | 2 | Modulo `%` | 7–9: even, odd (watch out for negative numbers!), divisible by 5 |
 | 3 | `&&` and `\|\|` | 10–15: ranges, outside a range, even and positive, divisible by 3 or 5, divisible by both, two-digit numbers |
 | 4 | Digits | 16–20: ends in 7, in the 70s, both digits the same, 7 Boom!, contains the digit 3 |
+| 5 | Two numbers `x` and `y` | 21–24: x greater than y, both even, both odd, both odd or both even |
 
 ## For teachers
 
-[`ConditionsPractice_AnswerKey.cs`](ConditionsPractice_AnswerKey.cs) has a sample solution for every problem. It scores 20/20 when run.
+[`ConditionsPractice_AnswerKey.cs`](ConditionsPractice_AnswerKey.cs) has a sample solution for every problem. It scores 24/24 when run.
