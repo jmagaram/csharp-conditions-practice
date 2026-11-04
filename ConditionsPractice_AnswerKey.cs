@@ -3,9 +3,10 @@ using System;
 class Program
 {
     // ===================================================================
-    //   CONDITIONS PRACTICE  -  20 problems
+    //   CONDITIONS PRACTICE  -  24 problems
     //
-    //   Each problem is a method that gets a number x and must answer
+    //   Each problem is a method that gets a number x (or two numbers,
+    //   x and y, in Level 5) and must answer
     //   true or false.  Replace the word TODO with your condition.
     //
     //   Example:   return TODO;     becomes     return x > 5;
@@ -159,6 +160,35 @@ class Program
         return x % 10 == 3 || x / 10 % 10 == 3 || x / 100 == 3;
     }
 
+    // -------------------------------------------------------------------
+    //   LEVEL 5: Two numbers  x  and  y
+    //   Now the method gets TWO numbers. Use both of them in your condition.
+    // -------------------------------------------------------------------
+
+    // 21. Is x greater than y?
+    static bool P21(int x, int y)
+    {
+        return x > y;
+    }
+
+    // 22. Are x and y BOTH even?
+    static bool P22(int x, int y)
+    {
+        return x % 2 == 0 && y % 2 == 0;
+    }
+
+    // 23. Are x and y BOTH odd?  (careful: try negative numbers!)
+    static bool P23(int x, int y)
+    {
+        return x % 2 != 0 && y % 2 != 0;
+    }
+
+    // 24. Are x and y both odd OR both even?
+    static bool P24(int x, int y)
+    {
+        return (x % 2 == 0 && y % 2 == 0) || (x % 2 != 0 && y % 2 != 0);
+    }
+
     // ===================================================================
     //   DO NOT CHANGE ANYTHING BELOW THIS LINE
     // ===================================================================
@@ -172,14 +202,33 @@ class Program
     static void Check(int number, string question, Func<int, bool> method,
                       int[] inputs, bool[] expected)
     {
+        RunTests(number, question, inputs.Length,
+                 i => method(inputs[i]),
+                 i => "x = " + inputs[i].ToString().PadRight(6),
+                 expected);
+    }
+
+    static void Check(int number, string question, Func<int, int, bool> method,
+                      int[] xs, int[] ys, bool[] expected)
+    {
+        RunTests(number, question, xs.Length,
+                 i => method(xs[i], ys[i]),
+                 i => "x = " + xs[i].ToString().PadRight(5) + " y = " + ys[i].ToString().PadRight(5),
+                 expected);
+    }
+
+    static void RunTests(int number, string question, int count,
+                         Func<int, bool> runTest, Func<int, string> describe,
+                         bool[] expected)
+    {
         Console.WriteLine("Problem " + number + ": " + question);
         int correct = 0;
-        for (int i = 0; i < inputs.Length; i++)
+        for (int i = 0; i < count; i++)
         {
             bool got;
             try
             {
-                got = method(inputs[i]);
+                got = runTest(i);
             }
             catch (NotImplementedException)
             {
@@ -188,7 +237,7 @@ class Program
                 notDone += " " + number;
                 return;
             }
-            string line = "   x = " + inputs[i].ToString().PadRight(6)
+            string line = "   " + describe(i)
                         + " expected: " + expected[i].ToString().PadRight(6)
                         + " your code: " + got.ToString().PadRight(6);
             if (got == expected[i])
@@ -201,7 +250,7 @@ class Program
                 Console.WriteLine(line + " <-- WRONG");
             }
         }
-        if (correct == inputs.Length)
+        if (correct == count)
         {
             solved++;
             Console.WriteLine("   ALL " + correct + " CORRECT!");
@@ -209,7 +258,7 @@ class Program
         else
         {
             needWork += " " + number;
-            Console.WriteLine("   " + correct + " of " + inputs.Length + " correct - keep trying");
+            Console.WriteLine("   " + correct + " of " + count + " correct - keep trying");
         }
         Console.WriteLine();
     }
@@ -276,12 +325,28 @@ class Program
         Check(20, "Does x contain the digit 3 anywhere? (x from 0 to 999)", P20,
             new int[]  { 3, 13, 31, 130, 305, 300, 333, 123, 444, 100, 0, 999, 38 },
             new bool[] { true, true, true, true, true, true, true, true, false, false, false, false, true });
+        Check(21, "Is x greater than y?", P21,
+            new int[]  { 5, 3, 4, -1, 0, 100, -8 },
+            new int[]  { 3, 5, 4, -2, 10, 99, -3 },
+            new bool[] { true, false, false, true, false, true, false });
+        Check(22, "Are x and y BOTH even?", P22,
+            new int[]  { 2, 2, 3, 3, 0, 10, -4 },
+            new int[]  { 4, 3, 2, 5, -6, 7, 8 },
+            new bool[] { true, false, false, false, true, false, true });
+        Check(23, "Are x and y BOTH odd?  (careful: try negative numbers!)", P23,
+            new int[]  { 3, 3, 4, 2, -3, -1, 0 },
+            new int[]  { 5, 4, 3, 6, 7, -1, 1 },
+            new bool[] { true, false, false, false, true, true, false });
+        Check(24, "Are x and y both odd OR both even?", P24,
+            new int[]  { 2, 3, 2, 3, 0, -3, -4, 10, 7 },
+            new int[]  { 4, 5, 3, 2, 0, 5, 7, -1, -9 },
+            new bool[] { true, true, false, false, true, true, false, false, true });
 
         Console.WriteLine("===================================");
-        Console.WriteLine("  SCORE: " + solved + " of 20 problems solved");
+        Console.WriteLine("  SCORE: " + solved + " of 24 problems solved");
         if (needWork != "") Console.WriteLine("  Needs work:  " + needWork);
         if (notDone != "")  Console.WriteLine("  Not done yet:" + notDone);
-        if (solved == 20)   Console.WriteLine("  PERFECT! Every problem is correct!");
+        if (solved == 24)   Console.WriteLine("  PERFECT! Every problem is correct!");
         Console.WriteLine("===================================");
     }
 }
